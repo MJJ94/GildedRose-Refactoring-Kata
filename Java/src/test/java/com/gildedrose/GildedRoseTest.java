@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -96,33 +97,31 @@ class GildedRoseTest {
 
     @Test
     void foo() {
-        Item[] items = new Item[]{new Item("foo", 0, 0)};
-        GildedRose app = new GildedRose(items);
-        app.updateQuality();
-        assertEquals("foo", app.items[0].name);
+        List<Item> items = Collections.singletonList(new Item("foo", 0, 0));
+        GildedRose app = new GildedRose();
+        List<Item> result = app.updateQuality(items);
+        assertEquals("foo", result.get(0).name);
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @Disabled("Enable again once the exceptions are created and handled")
     void itemsCantHaveNullOrEmptyNames(String itemName) {
-        Item[] items = new Item[]{new Item(itemName, 4, 10)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(itemName, 4, 10));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
-
-        assertThrows(RuntimeException.class, gildedRose::updateQuality);
+        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
     }
 
     @ParameterizedTest
     @MethodSource("normalItemsQualityRangeAndExpectedResult")
     void normalItemsQualityUpdateTest(Integer sellIn, Integer expectedQuality, Integer quality) {
-        Item[] items = new Item[]{new Item("item1", sellIn, quality)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item("item1", sellIn, quality));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(expectedQuality, item.quality);
         int expectedSellIn = sellIn - 1;
         assertEquals(expectedSellIn, item.sellIn);
@@ -130,12 +129,12 @@ class GildedRoseTest {
 
     @Test
     void itemsQualityCantBeNegative() {
-        Item[] items = new Item[]{new Item("item1", 4, 0)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item("item1", 4, 0));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(0, item.quality);
         assertEquals(3, item.sellIn);
     }
@@ -143,12 +142,12 @@ class GildedRoseTest {
     @ParameterizedTest
     @MethodSource("agedBrieQualityRangeAndExpectedResult")
     void agedBrieIncreaseInQualityNotMoreThan50(Integer expectedQualityAfterUpdate, Integer quality) {
-        Item[] items = new Item[]{new Item(ItemNames.AGED_BRIE.getValue(), 4, quality)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(ItemNames.AGED_BRIE.getValue(), 4, quality));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(expectedQualityAfterUpdate, item.quality);
         assertEquals(3, item.sellIn);
     }
@@ -157,23 +156,21 @@ class GildedRoseTest {
     @ValueSource(strings = {"Aged Brie", "item2", "Backstage passes to a TAFKAL80ETC concert"})
     @Disabled("Enable again once the exceptions are created and handled")
     void itemsExceptSulfurasQualityCantBeMoreThan50(String itemName) {
-        Item[] items = new Item[]{new Item(itemName, 4, 52)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(itemName, 4, 52));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
-
-        assertThrows(RuntimeException.class, gildedRose::updateQuality);
+        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
     }
 
     @ParameterizedTest
     @MethodSource("backstagePassQualityRangeAndExpectedResult")
     void backstagePassQualityIncreasesTest(Integer sellIn, Integer expectedQuality, Integer quality) {
-        Item[] items = new Item[]{new Item(ItemNames.BACKSTAGE_PASSES.getValue(), sellIn, quality)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(ItemNames.BACKSTAGE_PASSES.getValue(), sellIn, quality));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(expectedQuality, item.quality);
         int expectedSellIn = sellIn - 1;
         assertEquals(expectedSellIn, item.sellIn);
@@ -181,12 +178,12 @@ class GildedRoseTest {
 
     @Test
     void sulfurasQualityNeverChanges() {
-        Item[] items = new Item[]{new Item(ItemNames.SULFURAS.getValue(), 4, 80)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(ItemNames.SULFURAS.getValue(), 4, 80));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(80, item.quality);
     }
 
@@ -194,24 +191,22 @@ class GildedRoseTest {
     @ValueSource(ints = {5, 81, 50})
     @Disabled("Enable again once the exceptions are created and handled")
     void sulfurasQualityCantBeDifferentThan80(int quality) {
-        Item[] items = new Item[]{new Item(ItemNames.SULFURAS.getValue(), 4, quality)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item(ItemNames.SULFURAS.getValue(), 4, quality));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
-
-        assertThrows(RuntimeException.class, gildedRose::updateQuality);
+        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
     }
 
     @ParameterizedTest
     @MethodSource("conjuredItemsQualityRangeAndExpectedResult")
     @Disabled("Enable once conjured items feature is implemented")
     void conjuredItemsQualityUpdateTest(Integer sellIn, Integer expectedQuality, Integer quality) {
-        Item[] items = new Item[]{new Item("Conjured", sellIn, quality)};
-        GildedRose gildedRose = new GildedRose(items);
+        List<Item> items = Collections.singletonList(new Item("Conjured", sellIn, quality));
+        GildedRose gildedRose = new GildedRose();
 
-        gildedRose.updateQuality();
+        List<Item> result = gildedRose.updateQuality(items);
 
-        Item item = gildedRose.items[0];
+        Item item = result.get(0);
         assertEquals(expectedQuality, item.quality);
         int expectedSellIn = sellIn - 1;
         assertEquals(expectedSellIn, item.sellIn);

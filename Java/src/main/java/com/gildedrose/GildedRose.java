@@ -1,14 +1,11 @@
 package com.gildedrose;
 
+import java.util.List;
+
 class GildedRose {
 
-    Item[] items;
+    public List<Item> updateQuality(List<Item> items) {
 
-    public GildedRose(Item[] items) {
-        this.items = items;
-    }
-
-    public void updateQuality() {
         for (Item item : items) {
             //if it's not aged brie neither backstage passes
             if (!item.name.equals(ItemNames.AGED_BRIE.getValue())
@@ -60,5 +57,6 @@ class GildedRose {
                 }
             }
         }
+        return items;
     }
 }
