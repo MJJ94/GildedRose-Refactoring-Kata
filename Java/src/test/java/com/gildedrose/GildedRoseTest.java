@@ -143,7 +143,7 @@ class GildedRoseTest {
     @ParameterizedTest
     @MethodSource("agedBrieQualityRangeAndExpectedResult")
     void agedBrieIncreaseInQualityNotMoreThan50(Integer expectedQualityAfterUpdate, Integer quality) {
-        Item[] items = new Item[]{new Item("Aged Brie", 4, quality)};
+        Item[] items = new Item[]{new Item(ItemNames.AGED_BRIE.getValue(), 4, quality)};
         GildedRose gildedRose = new GildedRose(items);
 
         gildedRose.updateQuality();
@@ -154,7 +154,7 @@ class GildedRoseTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Aged Brie", "item2", "Backstage passes"})
+    @ValueSource(strings = {"Aged Brie", "item2", "Backstage passes to a TAFKAL80ETC concert"})
     @Disabled("Enable again once the exceptions are created and handled")
     void itemsExceptSulfurasQualityCantBeMoreThan50(String itemName) {
         Item[] items = new Item[]{new Item(itemName, 4, 52)};
@@ -168,7 +168,7 @@ class GildedRoseTest {
     @ParameterizedTest
     @MethodSource("backstagePassQualityRangeAndExpectedResult")
     void backstagePassQualityIncreasesTest(Integer sellIn, Integer expectedQuality, Integer quality) {
-        Item[] items = new Item[]{new Item("Backstage passes", sellIn, quality)};
+        Item[] items = new Item[]{new Item(ItemNames.BACKSTAGE_PASSES.getValue(), sellIn, quality)};
         GildedRose gildedRose = new GildedRose(items);
 
         gildedRose.updateQuality();
@@ -180,9 +180,8 @@ class GildedRoseTest {
     }
 
     @Test
-    @Disabled("Update test after creating legendaryItem for Sulfuras")
     void sulfurasQualityNeverChanges() {
-        Item[] items = new Item[]{new Item("Sulfuras", 4, 80)};
+        Item[] items = new Item[]{new Item(ItemNames.SULFURAS.getValue(), 4, 80)};
         GildedRose gildedRose = new GildedRose(items);
 
         gildedRose.updateQuality();
@@ -195,7 +194,7 @@ class GildedRoseTest {
     @ValueSource(ints = {5, 81, 50})
     @Disabled("Enable again once the exceptions are created and handled")
     void sulfurasQualityCantBeDifferentThan80(int quality) {
-        Item[] items = new Item[]{new Item("Sulfuras", 4, quality)};
+        Item[] items = new Item[]{new Item(ItemNames.SULFURAS.getValue(), 4, quality)};
         GildedRose gildedRose = new GildedRose(items);
 
         gildedRose.updateQuality();
@@ -205,6 +204,7 @@ class GildedRoseTest {
 
     @ParameterizedTest
     @MethodSource("conjuredItemsQualityRangeAndExpectedResult")
+    @Disabled("Enable once conjured items feature is implemented")
     void conjuredItemsQualityUpdateTest(Integer sellIn, Integer expectedQuality, Integer quality) {
         Item[] items = new Item[]{new Item("Conjured", sellIn, quality)};
         GildedRose gildedRose = new GildedRose(items);
