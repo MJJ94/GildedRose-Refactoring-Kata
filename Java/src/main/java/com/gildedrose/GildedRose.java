@@ -1,61 +1,38 @@
 package com.gildedrose;
 
+import com.gildedrose.exceptions.ItemNameNullOrEmptyException;
+import com.gildedrose.exceptions.ItemsNullOrEmptyExceptions;
+import com.gildedrose.handlers.ItemHandler;
+import com.gildedrose.handlers.agedbrie.AgedBrieHandler;
+import com.gildedrose.handlers.backstagepass.BackstagePassHandler;
+import com.gildedrose.handlers.normal.NormalItemHandler;
+import com.gildedrose.handlers.sulfuras.SulfurasHandler;
+
 import java.util.List;
+import java.util.Objects;
 
 class GildedRose {
 
     public List<Item> updateQuality(List<Item> items) {
 
+        if (Objects.isNull(items) || items.isEmpty()) {
+            throw new ItemsNullOrEmptyExceptions();
+        }
+
+        ItemHandler normalItemHandler = new NormalItemHandler();
+        ItemHandler backstagePassHandler = new BackstagePassHandler();
+        ItemHandler agedBrieHandler = new AgedBrieHandler();
+        ItemHandler sulfurasHandler = new SulfurasHandler();
+
+        sulfurasHandler.setNext(agedBrieHandler);
+        agedBrieHandler.setNext(backstagePassHandler);
+        backstagePassHandler.setNext(normalItemHandler);
+
         for (Item item : items) {
-            //if it's not aged brie neither backstage passes
-            if (!item.name.equals(ItemNames.AGED_BRIE.getValue())
-                && !item.name.equals(ItemNames.BACKSTAGE_PASSES.getValue())) {
-                //If item quality is higher than 0 and it's not Sulfuras
-                if (item.quality > 0 && !item.name.equals(ItemNames.SULFURAS.getValue())) {
-                    item.quality = item.quality - 1;
-                }
-            } else {
-                //If aged brie or backstage passes quality is inferior to 50
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1;
-                    //If the item is backstage pass
-                    if (item.name.equals(ItemNames.BACKSTAGE_PASSES.getValue())) {
-                        //if backstage pass sellIn is inferior to 11 and quality inferior to 50
-                        if (item.sellIn < 11 && item.quality < 50) {
-                            item.quality = item.quality + 1;
-                        }
-                        //if backstage pass sellIn is inferior to 6 and quality inferior to 50
-                        if (item.sellIn < 6 && item.quality < 50) {
-                            item.quality = item.quality + 1;
-                        }
-                    }
-                }
+            if (Objects.isNull(item.name) || item.name.isEmpty()) {
+                throw new ItemNameNullOrEmptyException();
             }
-            //If the item is not Sulfuras
-            if (!item.name.equals(ItemNames.SULFURAS.getValue())) {
-                item.sellIn = item.sellIn - 1;
-            }
-            //If SellIn is inferior to 0
-            if (item.sellIn < 0) {
-                //If the item is not aged brie
-                if (!item.name.equals(ItemNames.AGED_BRIE.getValue())) {
-                    //If the item is not backstage pass
-                    if (!item.name.equals(ItemNames.BACKSTAGE_PASSES.getValue())) {
-                        //If the item quality is superior to 0 and is not Sulfuras
-                        if (item.quality > 0 && !item.name.equals(ItemNames.SULFURAS.getValue())) {
-                            item.quality = item.quality - 1;
-                        }
-                    } else {
-                        //If the item is backstage pass then quality is 0
-                        item.quality = 0;
-                    }
-                } else {
-                    //If the item is aged brie and quality is inferior to 50
-                    if (item.quality < 50) {
-                        item.quality = item.quality + 1;
-                    }
-                }
-            }
+            sulfurasHandler.handle(item);
         }
         return items;
     }

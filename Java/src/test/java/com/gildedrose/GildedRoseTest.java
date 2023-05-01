@@ -39,14 +39,17 @@ class GildedRoseTest {
 
     private static Stream<Arguments> agedBrieQualityRangeAndExpectedResult() {
         List<Arguments> brieQualityRange = new ArrayList<>();
-        for (int quality = 0; quality < 51; quality++) {
-            if (quality > 49) {
-                //If agedBrie quality is 50 or more we don't increase the quality
-                brieQualityRange.add(Arguments.of(quality, quality));
+        int sellIn = 15;
+        int quality = 20;
+        int expectedQualityAfterUpdate;
+        while (sellIn > -2) {
+            if (sellIn < 1) {
+                expectedQualityAfterUpdate = quality + 2;
             } else {
-                int expectedQualityAfterUpdate = quality + 1;
-                brieQualityRange.add(Arguments.of(expectedQualityAfterUpdate, quality));
+                expectedQualityAfterUpdate = quality + 1;
             }
+            brieQualityRange.add(Arguments.of(sellIn, expectedQualityAfterUpdate, quality));
+            sellIn--;
         }
         return brieQualityRange.stream();
     }
@@ -63,7 +66,7 @@ class GildedRoseTest {
             } else if (sellIn > 5) {
                 //If sellIn is between 10 and 6 then quality increase by 2
                 expectedQuality = quality + 2;
-            } else if (sellIn > -1) {
+            } else if (sellIn > 0) {
                 //If sellIn is between 5 and 0 then quality increase by 3
                 expectedQuality = quality + 3;
             } else {
@@ -141,15 +144,15 @@ class GildedRoseTest {
 
     @ParameterizedTest
     @MethodSource("agedBrieQualityRangeAndExpectedResult")
-    void agedBrieIncreaseInQualityNotMoreThan50(Integer expectedQualityAfterUpdate, Integer quality) {
-        List<Item> items = Collections.singletonList(new Item(ItemNames.AGED_BRIE.getValue(), 4, quality));
+    void agedBrieQUalityIncreasesTest(Integer sellIn, Integer expectedQualityAfterUpdate, Integer quality) {
+        List<Item> items = Collections.singletonList(new Item(ItemNames.AGED_BRIE.getValue(), sellIn, quality));
         GildedRose gildedRose = new GildedRose();
 
         List<Item> result = gildedRose.updateQuality(items);
 
         Item item = result.get(0);
         assertEquals(expectedQualityAfterUpdate, item.quality);
-        assertEquals(3, item.sellIn);
+        assertEquals(sellIn - 1, item.sellIn);
     }
 
     @ParameterizedTest
