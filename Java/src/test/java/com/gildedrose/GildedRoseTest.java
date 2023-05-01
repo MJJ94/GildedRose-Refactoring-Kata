@@ -1,5 +1,9 @@
 package com.gildedrose;
 
+import com.gildedrose.exceptions.ErrorCodesAndDescriptions;
+import com.gildedrose.exceptions.IncorrectSulfurasQualityException;
+import com.gildedrose.exceptions.ItemNameNullOrEmptyException;
+import com.gildedrose.exceptions.ItemsNullOrEmptyExceptions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -108,12 +112,18 @@ class GildedRoseTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    @Disabled("Enable again once the exceptions are created and handled")
+    void itemsListCantBeNullOrEmpty(List<Item> items) {
+        GildedRose gildedRose = new GildedRose();
+        assertThrows(ItemsNullOrEmptyExceptions.class, () -> gildedRose.updateQuality(items), ErrorCodesAndDescriptions.ITEMS_NULL_OR_EMPTY.getErrorDescription());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
     void itemsCantHaveNullOrEmptyNames(String itemName) {
         List<Item> items = Collections.singletonList(new Item(itemName, 4, 10));
         GildedRose gildedRose = new GildedRose();
 
-        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
+        assertThrows(ItemNameNullOrEmptyException.class, () -> gildedRose.updateQuality(items), ErrorCodesAndDescriptions.ITEMS_NAME_NULL_OR_EMPTY.getErrorDescription());
     }
 
     @ParameterizedTest
@@ -156,16 +166,6 @@ class GildedRoseTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"Aged Brie", "item2", "Backstage passes to a TAFKAL80ETC concert"})
-    @Disabled("Enable again once the exceptions are created and handled")
-    void itemsExceptSulfurasQualityCantBeMoreThan50(String itemName) {
-        List<Item> items = Collections.singletonList(new Item(itemName, 4, 52));
-        GildedRose gildedRose = new GildedRose();
-
-        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
-    }
-
-    @ParameterizedTest
     @MethodSource("backstagePassQualityRangeAndExpectedResult")
     void backstagePassQualityIncreasesTest(Integer sellIn, Integer expectedQuality, Integer quality) {
         List<Item> items = Collections.singletonList(new Item(ItemNames.BACKSTAGE_PASSES.getValue(), sellIn, quality));
@@ -192,12 +192,11 @@ class GildedRoseTest {
 
     @ParameterizedTest
     @ValueSource(ints = {5, 81, 50})
-    @Disabled("Enable again once the exceptions are created and handled")
     void sulfurasQualityCantBeDifferentThan80(int quality) {
         List<Item> items = Collections.singletonList(new Item(ItemNames.SULFURAS.getValue(), 4, quality));
         GildedRose gildedRose = new GildedRose();
 
-        assertThrows(RuntimeException.class, () -> gildedRose.updateQuality(items));
+        assertThrows(IncorrectSulfurasQualityException.class, () -> gildedRose.updateQuality(items), ErrorCodesAndDescriptions.INCORRECT_SULFURAS_QUALITY_VALUE.getErrorDescription());
     }
 
     @ParameterizedTest
