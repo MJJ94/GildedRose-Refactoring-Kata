@@ -12,7 +12,7 @@ public class AgedBrieHandler extends NonSulfurasItemCommonHandler {
             if (item.quality < 50) {
                 item.quality++;
             }
-            if (item.sellIn < 1) {
+            if (item.sellIn < 1 && item.quality < 50) {
                 item.quality++;
             }
             super.nonSulfurasEndOfTheDay(item);
