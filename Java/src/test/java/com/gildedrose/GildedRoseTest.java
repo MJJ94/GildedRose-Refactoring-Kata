@@ -4,7 +4,6 @@ import com.gildedrose.exceptions.ErrorCodesAndDescriptions;
 import com.gildedrose.exceptions.IncorrectSulfurasQualityException;
 import com.gildedrose.exceptions.ItemNameNullOrEmptyException;
 import com.gildedrose.exceptions.ItemsNullOrEmptyExceptions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -201,9 +200,9 @@ class GildedRoseTest {
 
     @ParameterizedTest
     @MethodSource("conjuredItemsQualityRangeAndExpectedResult")
-    @Disabled("Enable once conjured items feature is implemented")
+//    @Disabled("Enable once conjured items feature is implemented")
     void conjuredItemsQualityUpdateTest(Integer sellIn, Integer expectedQuality, Integer quality) {
-        List<Item> items = Collections.singletonList(new Item("Conjured", sellIn, quality));
+        List<Item> items = Collections.singletonList(new Item(ItemNames.CONJURED.getValue(), sellIn, quality));
         GildedRose gildedRose = new GildedRose();
 
         List<Item> result = gildedRose.updateQuality(items);
