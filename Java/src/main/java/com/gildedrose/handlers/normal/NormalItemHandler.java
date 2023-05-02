@@ -10,11 +10,10 @@ public class NormalItemHandler extends NonSulfurasItemCommonHandler {
 
         if (item.quality > 0) {
             item.quality--;
-            if (item.sellIn < 1) {
-                item.quality--;
-            }
         }
-
+        if (item.sellIn < 1 && item.quality > 0) {
+            item.quality--;
+        }
         nonSulfurasEndOfTheDay(item);
     }
 }
